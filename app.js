@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const authMiddleware = require('./middleware/auth');
 const catwayRoutes = require('./routes/catways');
 const reservationRoutes = require('./routes/reservations');
+const catwayReservationRoutes = require('./routes/catwayReservations');
 const userRoutes = require('./routes/users');
 const User = require('./models/User');
 
@@ -79,6 +80,12 @@ app.get('/api-docs', (req, res) => {
       <li>POST /reservations</li>
       <li>PUT /reservations/:id</li>
       <li>DELETE /reservations/:id</li>
+      <li>GET /catways/:id/reservations</li>
+      <li>GET /catways/:id/reservations/:idReservation</li>
+      <li>POST /catways/:id/reservations</li>
+      <li>PUT /catways/:id/reservations</li>
+      <li>PUT /catways/:id/reservations/:idReservation</li>
+      <li>DELETE /catways/:id/reservations/:idReservation</li>
       <li>GET /users</li>
       <li>GET /users/:id</li>
       <li>POST /users</li>
@@ -90,6 +97,8 @@ app.get('/api-docs', (req, res) => {
 
 app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
+app.use('/catways', catwayReservationRoutes);
+app.use('/catway', catwayReservationRoutes);
 app.use('/reservations', reservationRoutes);
 app.use('/users', authMiddleware, userRoutes);
 app.use('/dashboard', authMiddleware);
