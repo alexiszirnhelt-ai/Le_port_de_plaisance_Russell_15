@@ -80,16 +80,20 @@
       fields.catwayNumber.value = '';
       fields.catwayType.value = 'short';
       fields.catwayState.value = '';
+      fields.catwayNumber.disabled = false;
+      fields.catwayType.disabled = false;
       formTitle.textContent = 'Creer un catway';
       submitBtn.textContent = 'Creer';
       cancelBtn.hidden = true;
     }
 
     function fillForm(catway) {
-      fields.id.value = catway._id;
+      fields.id.value = String(catway.catwayNumber);
       fields.catwayNumber.value = catway.catwayNumber;
       fields.catwayType.value = catway.catwayType;
       fields.catwayState.value = catway.catwayState;
+      fields.catwayNumber.disabled = true;
+      fields.catwayType.disabled = true;
       formTitle.textContent = 'Modifier un catway';
       submitBtn.textContent = 'Mettre a jour';
       cancelBtn.hidden = false;
@@ -116,9 +120,9 @@
             <td>${catway.catwayType}</td>
             <td>${catway.catwayState}</td>
             <td>
-              <button type="button" data-action="show" data-id="${catway._id}">Details</button>
-              <button type="button" data-action="edit" data-id="${catway._id}">Modifier</button>
-              <button type="button" data-action="delete" data-id="${catway._id}" class="danger">Supprimer</button>
+              <button type="button" data-action="show" data-id="${catway.catwayNumber}">Details</button>
+              <button type="button" data-action="edit" data-id="${catway.catwayNumber}">Modifier</button>
+              <button type="button" data-action="delete" data-id="${catway.catwayNumber}" class="danger">Supprimer</button>
             </td>
           </tr>
         `).join('');
@@ -163,17 +167,19 @@
       event.preventDefault();
       formMessage.textContent = '';
 
-      const payload = {
-        catwayNumber: Number(fields.catwayNumber.value),
-        catwayType: fields.catwayType.value,
-        catwayState: fields.catwayState.value.trim(),
-      };
-
       try {
         if (fields.id.value) {
+          const payload = {
+            catwayState: fields.catwayState.value.trim(),
+          };
           await updateCatway(fields.id.value, payload);
           formMessage.textContent = 'Catway mis a jour.';
         } else {
+          const payload = {
+            catwayNumber: Number(fields.catwayNumber.value),
+            catwayType: fields.catwayType.value,
+            catwayState: fields.catwayState.value.trim(),
+          };
           await createCatway(payload);
           formMessage.textContent = 'Catway cree.';
         }
@@ -195,7 +201,7 @@
 
       const id = button.dataset.id;
       const action = button.dataset.action;
-      const catway = catwaysCache.find((item) => item._id === id);
+      const catway = catwaysCache.find((item) => String(item.catwayNumber) === id);
 
       if (!catway) return;
 

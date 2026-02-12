@@ -1,9 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const Catway = require('../models/Catway');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
+
+const parseCatwayNumberParam = (value) => {
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    return null;
+  }
+  return parsed;
+};
 
 router.get('/', async (req, res) => {
   try {
@@ -15,14 +22,13 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const catwayNumber = parseCatwayNumberParam(req.params.id);
+  if (catwayNumber === null) {
     return res.status(400).json({ message: 'ID invalide.' });
   }
 
   try {
-    const catway = await Catway.findById(id);
+    const catway = await Catway.findOne({ catwayNumber });
 
     if (!catway) {
       return res.status(404).json({ message: 'Catway introuvable.' });
@@ -44,14 +50,21 @@ router.post('/', auth, async (req, res) => {
 });
 
 router.put('/:id', auth, async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const catwayNumber = parseCatwayNumberParam(req.params.id);
+  if (catwayNumber === null) {
     return res.status(400).json({ message: 'ID invalide.' });
   }
 
   try {
-    const catway = await Catway.findByIdAndUpdate(id, req.body, {
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'catwayState')) {
+      return res.status(400).json({ message: 'Le champ catwayState est requis.' });
+    }
+
+    const payload = {
+      catwayState: req.body.catwayState,
+    };
+
+    const catway = await Catway.findOneAndUpdate({ catwayNumber }, payload, {
       new: true,
       runValidators: true,
     });
@@ -67,14 +80,13 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 router.delete('/:id', auth, async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const catwayNumber = parseCatwayNumberParam(req.params.id);
+  if (catwayNumber === null) {
     return res.status(400).json({ message: 'ID invalide.' });
   }
 
   try {
-    const catway = await Catway.findByIdAndDelete(id);
+    const catway = await Catway.findOneAndDelete({ catwayNumber });
 
     if (!catway) {
       return res.status(404).json({ message: 'Catway introuvable.' });
