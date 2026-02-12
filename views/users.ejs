@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Utilisateurs - Port de Plaisance Russell</title>
+  <link rel="stylesheet" href="/css/users.css">
+</head>
+<body>
+  <main class="container">
+    <div class="topbar">
+      <h1>Gestion des utilisateurs</h1>
+      <a href="/dashboard" class="back-link">Retour au dashboard</a>
+    </div>
+
+    <section class="card">
+      <h2 id="form-title">Creer un utilisateur</h2>
+      <form id="user-form">
+        <input type="hidden" id="user-id">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" minlength="6" required>
+
+        <div class="actions">
+          <button type="submit" id="submit-btn">Creer</button>
+          <button type="button" id="cancel-btn" class="secondary" hidden>Annuler</button>
+        </div>
+      </form>
+      <p id="form-message"></p>
+      <p class="hint">En mode modification, laissez le mot de passe vide pour le conserver.</p>
+    </section>
+
+    <section class="card">
+      <h2>Liste des utilisateurs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Cree le</th>
+            <th>Modifie le</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-body">
+          <tr><td colspan="4">Chargement...</td></tr>
+        </tbody>
+      </table>
+      <p id="table-message"></p>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('user-form');
+    const formTitle = document.getElementById('form-title');
+    const submitBtn = document.getElementById('submit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const formMessage = document.getElementById('form-message');
+    const tableMessage = document.getElementById('table-message');
+    const usersBody = document.getElementById('users-body');
+
+    const fields = {
+      id: document.getElementById('user-id'),
+      email: document.getElementById('email'),
+      password: document.getElementById('password'),
+    };
+
+    let usersCache = [];
+
+    function formatDate(value) {
+      return new Date(value).toLocaleDateString('fr-FR');
+    }
+
+    function resetForm() {
+      fields.id.value = '';
+      fields.email.value = '';
+      fields.password.value = '';
+      fields.password.required = true;
+      formTitle.textContent = 'Creer un utilisateur';
+      submitBtn.textContent = 'Creer';
+      cancelBtn.hidden = true;
+    }
+
+    function fillForm(user) {
+      fields.id.value = user._id;
+      fields.email.value = user.email;
+      fields.password.value = '';
+      fields.password.required = false;
+      formTitle.textContent = 'Modifier un utilisateur';
+      submitBtn.textContent = 'Mettre a jour';
+      cancelBtn.hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function loadUsers() {
+      tableMessage.textContent = '';
+      try {
+        const response = await fetch('/users');
+        if (!response.ok) {
+          throw new Error('Erreur API');
+        }
+
+        usersCache = await response.json();
+        if (!usersCache.length) {
+          usersBody.innerHTML = '<tr><td colspan="4">Aucun utilisateur.</td></tr>';
+          return;
+        }
+
+        usersBody.innerHTML = usersCache.map((user) => `
+          <tr>
+            <td>${user.email}</td>
+            <td>${formatDate(user.createdAt)}</td>
+            <td>${formatDate(user.updatedAt)}</td>
+            <td>
+              <button type="button" data-action="show" data-id="${user._id}">Details</button>
+              <button type="button" data-action="edit" data-id="${user._id}">Modifier</button>
+              <button type="button" data-action="delete" data-id="${user._id}" class="danger">Supprimer</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        usersBody.innerHTML = '<tr><td colspan="4">Impossible de charger les utilisateurs.</td></tr>';
+      }
+    }
+
+    async function createUser(payload) {
+      const response = await fetch('/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Echec de creation');
+      }
+    }
+
+    async function updateUser(id, payload) {
+      const response = await fetch(`/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Echec de mise a jour');
+      }
+    }
+
+    async function deleteUser(id) {
+      const response = await fetch(`/users/${id}`, { method: 'DELETE' });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Echec de suppression');
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formMessage.textContent = '';
+
+      const payload = {
+        email: fields.email.value.trim(),
+      };
+
+      if (fields.password.value) {
+        payload.password = fields.password.value;
+      }
+
+      try {
+        if (fields.id.value) {
+          await updateUser(fields.id.value, payload);
+          formMessage.textContent = 'Utilisateur mis a jour.';
+        } else {
+          if (!payload.password) {
+            throw new Error('Mot de passe requis.');
+          }
+          await createUser(payload);
+          formMessage.textContent = 'Utilisateur cree.';
+        }
+        resetForm();
+        await loadUsers();
+      } catch (error) {
+        formMessage.textContent = error.message;
+      }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      formMessage.textContent = '';
+      resetForm();
+    });
+
+    usersBody.addEventListener('click', async (event) => {
+      const button = event.target.closest('button[data-id]');
+      if (!button) return;
+
+      const id = button.dataset.id;
+      const action = button.dataset.action;
+      const user = usersCache.find((item) => item._id === id);
+
+      if (!user) return;
+
+      if (action === 'show') {
+        tableMessage.textContent = `Utilisateur: ${user.email} (cree le ${formatDate(user.createdAt)})`;
+        return;
+      }
+
+      if (action === 'edit') {
+        fillForm(user);
+        tableMessage.textContent = '';
+        return;
+      }
+
+      if (action === 'delete') {
+        const confirmed = window.confirm(`Supprimer l utilisateur ${user.email} ?`);
+        if (!confirmed) return;
+
+        try {
+          await deleteUser(id);
+          tableMessage.textContent = 'Utilisateur supprime.';
+          if (fields.id.value === id) {
+            resetForm();
+          }
+          await loadUsers();
+        } catch (error) {
+          tableMessage.textContent = error.message;
+        }
+      }
+    });
+
+    resetForm();
+    loadUsers();
+  </script>
+</body>
+</html>

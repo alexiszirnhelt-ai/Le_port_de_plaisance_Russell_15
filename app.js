@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const authMiddleware = require('./middleware/auth');
 const catwayRoutes = require('./routes/catways');
 const reservationRoutes = require('./routes/reservations');
+const userRoutes = require('./routes/users');
 const User = require('./models/User');
 
 const app = express();
@@ -52,6 +53,7 @@ app.get('/', (req, res) => {
 app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
 app.use('/reservations', reservationRoutes);
+app.use('/users', authMiddleware, userRoutes);
 app.use('/dashboard', authMiddleware);
 
 app.get('/dashboard', (req, res) => {
@@ -67,6 +69,10 @@ app.get('/dashboard/catways', (req, res) => {
 
 app.get('/dashboard/reservations', (req, res) => {
   res.render('reservations');
+});
+
+app.get('/dashboard/users', (req, res) => {
+  res.render('users');
 });
 
 mongoose
