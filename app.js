@@ -23,8 +23,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/', authRoutes);
+app.use('/dashboard', authMiddleware);
 
-app.get('/dashboard', authMiddleware, (req, res) => {
+app.get('/dashboard', (req, res) => {
   res.send('Tableau de bord');
 });
 
