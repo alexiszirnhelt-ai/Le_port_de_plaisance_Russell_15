@@ -62,6 +62,9 @@ Application disponible par defaut sur `http://localhost:8080`.
 
 - `POST /login`
 - `GET /logout`
+- Compte de connexion:
+  - Email: `admin@russell.com`
+  - Mot de passe: `123Russell`
 
 Le token JWT est stocke dans un cookie HTTP only.
 
