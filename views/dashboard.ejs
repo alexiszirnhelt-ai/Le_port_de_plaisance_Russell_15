@@ -11,6 +11,9 @@
 
     <p><strong>Email :</strong> <%= userEmail %></p>
     <p><strong>Date du jour :</strong> <%= new Date(currentDate).toLocaleDateString('fr-FR') %></p>
+    <form action="/logout" method="post">
+      <button type="submit">Se deconnecter</button>
+    </form>
 
     <h2>Reservations en cours</h2>
     <table border="1" cellpadding="8" cellspacing="0">
