@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth');
 const authMiddleware = require('./middleware/auth');
+const catwayRoutes = require('./routes/catways');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/', authRoutes);
+app.use('/catways', catwayRoutes);
 app.use('/dashboard', authMiddleware);
 
 app.get('/dashboard', (req, res) => {
