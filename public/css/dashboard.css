@@ -40,8 +40,14 @@ h1 {
     background: #f8fafc;
 }
 .logout-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
 }
 .meta {
     display: grid;
