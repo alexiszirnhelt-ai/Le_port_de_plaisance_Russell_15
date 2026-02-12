@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const router = express.Router();
@@ -23,7 +24,22 @@ router.post('/login', async (req, res) => {
       return res.status(401).send('Identifiants invalides.');
     }
 
-    return res.redirect('/dashboard');
+    const jwtSecret = process.env.JWT_SECRET;
+
+    if (!jwtSecret) {
+      return res.status(500).send('JWT_SECRET manquant dans .env');
+    }
+
+    const token = jwt.sign(
+      { userId: user._id.toString(), email: user.email },
+      jwtSecret,
+      { expiresIn: '1h' }
+    );
+
+    return res.status(200).json({
+      message: 'Connexion reussie.',
+      token,
+    });
   } catch (error) {
     return res.status(500).send('Erreur serveur lors de la connexion.');
   }
