@@ -61,6 +61,10 @@ app.get('/dashboard', (req, res) => {
   });
 });
 
+app.get('/dashboard/catways', (req, res) => {
+  res.render('catways');
+});
+
 mongoose
   .connect(MONGODB_URI)
   .then(async () => {
