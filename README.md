@@ -24,7 +24,7 @@ Creer un fichier `.env` a la racine avec:
 ```env
 PORT=8080
 MONGODB_URI=mongodb://localhost:27017/port_russell
-JWT_SECRET=change_me
+JWT_SECRET=port_russell_secret_2026
 ```
 
 ## Donnees echantillon (Compass)
