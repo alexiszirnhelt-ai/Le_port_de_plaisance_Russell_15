@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -18,15 +19,7 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).send('Email et mot de passe requis.');
-  }
-
-  return res.redirect('/dashboard');
-});
+app.use('/', authRoutes);
 
 app.get('/dashboard', (req, res) => {
   res.send('Tableau de bord');
