@@ -10,6 +10,14 @@
   <main class="container">
     <div class="topbar">
       <h1>Tableau de bord</h1>
+    </div>
+
+    <nav class="menu card">
+      <a href="/dashboard">Accueil dashboard</a>
+      <a href="/dashboard/catways">CRUD catways</a>
+      <a href="/dashboard/reservations">CRUD reservations</a>
+      <a href="/dashboard/users">CRUD utilisateurs</a>
+      <a href="/api-docs">Documentation API</a>
       <form action="/logout" method="post">
         <button type="submit" class="logout-btn">
           <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -18,9 +26,13 @@
           Se deconnecter
         </button>
       </form>
-    </div>
+    </nav>
 
-    <section class="meta">
+    <section class="meta info-grid">
+      <div class="card">
+        <div class="label">Nom</div>
+        <div class="value"><%= userName %></div>
+      </div>
       <div class="card">
         <div class="label">Email</div>
         <div class="value"><%= userEmail %></div>
@@ -28,18 +40,6 @@
       <div class="card">
         <div class="label">Date du jour</div>
         <div class="value"><%= new Date(currentDate).toLocaleDateString('fr-FR') %></div>
-      </div>
-      <div class="card">
-        <div class="label">Catways</div>
-        <div class="value"><a href="/dashboard/catways">Gerer les catways (CRUD)</a></div>
-      </div>
-      <div class="card">
-        <div class="label">Reservations</div>
-        <div class="value"><a href="/dashboard/reservations">Gerer les reservations (CRUD)</a></div>
-      </div>
-      <div class="card">
-        <div class="label">Utilisateurs</div>
-        <div class="value"><a href="/dashboard/users">Gerer les utilisateurs (CRUD)</a></div>
       </div>
     </section>
 

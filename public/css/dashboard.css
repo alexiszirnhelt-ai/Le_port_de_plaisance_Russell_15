@@ -15,14 +15,33 @@ body {
 }
 .topbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 h1 {
     margin-top: 0;
     margin-bottom: 0;
+}
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.menu a {
+    text-decoration: none;
+    color: #0b5ed7;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+.menu a:hover {
+    background: #eff6ff;
+}
+.menu form {
+    margin-left: auto;
 }
 .logout-btn {
     display: inline-flex;
@@ -54,6 +73,9 @@ h1 {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 12px;
     margin-bottom: 20px;
+}
+.info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 .card {
     background: #f8fafc;

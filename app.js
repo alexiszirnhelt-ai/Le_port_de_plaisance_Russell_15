@@ -50,6 +50,31 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/api-docs', (req, res) => {
+  res.type('html').send(`
+    <h1>Documentation API</h1>
+    <ul>
+      <li>POST /login</li>
+      <li>POST /logout</li>
+      <li>GET /catways</li>
+      <li>GET /catways/:id</li>
+      <li>POST /catways</li>
+      <li>PUT /catways/:id</li>
+      <li>DELETE /catways/:id</li>
+      <li>GET /reservations</li>
+      <li>GET /reservations/:id</li>
+      <li>POST /reservations</li>
+      <li>PUT /reservations/:id</li>
+      <li>DELETE /reservations/:id</li>
+      <li>GET /users</li>
+      <li>GET /users/:id</li>
+      <li>POST /users</li>
+      <li>PUT /users/:id</li>
+      <li>DELETE /users/:id</li>
+    </ul>
+  `);
+});
+
 app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
 app.use('/reservations', reservationRoutes);
@@ -57,8 +82,13 @@ app.use('/users', authMiddleware, userRoutes);
 app.use('/dashboard', authMiddleware);
 
 app.get('/dashboard', (req, res) => {
+  const email = req.user.email || '';
+  const rawName = email.split('@')[0] || 'Utilisateur';
+  const userName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
   res.render('dashboard', {
-    userEmail: req.user.email,
+    userName,
+    userEmail: email,
     currentDate: new Date(),
   });
 });
