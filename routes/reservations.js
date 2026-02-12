@@ -5,11 +5,11 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-const hasOverlappingReservation = async ({ catwayNumber, checkIn, checkOut, excludeId }) => {
+const hasOverlappingReservation = async ({ catwayNumber, startDate, endDate, excludeId }) => {
   const overlapQuery = {
     catwayNumber,
-    checkIn: { $lt: checkOut },
-    checkOut: { $gt: checkIn },
+    startDate: { $lt: endDate },
+    endDate: { $gt: startDate },
   };
 
   if (excludeId) {
@@ -22,7 +22,7 @@ const hasOverlappingReservation = async ({ catwayNumber, checkIn, checkOut, excl
 
 router.get('/', async (req, res) => {
   try {
-    const reservations = await Reservation.find().sort({ checkIn: 1 });
+    const reservations = await Reservation.find().sort({ startDate: 1 });
     return res.status(200).json(reservations);
   } catch (error) {
     return res.status(500).json({ message: 'Erreur serveur.' });
@@ -51,11 +51,11 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', auth, async (req, res) => {
   try {
-    const { catwayNumber, checkIn, checkOut } = req.body;
+    const { catwayNumber, startDate, endDate } = req.body;
     const hasOverlap = await hasOverlappingReservation({
       catwayNumber,
-      checkIn: new Date(checkIn),
-      checkOut: new Date(checkOut),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
     });
 
     if (hasOverlap) {
@@ -71,7 +71,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -86,13 +86,13 @@ router.put('/:id', async (req, res) => {
     }
 
     const nextCatwayNumber = req.body.catwayNumber ?? currentReservation.catwayNumber;
-    const nextCheckIn = req.body.checkIn ? new Date(req.body.checkIn) : currentReservation.checkIn;
-    const nextCheckOut = req.body.checkOut ? new Date(req.body.checkOut) : currentReservation.checkOut;
+    const nextStartDate = req.body.startDate ? new Date(req.body.startDate) : currentReservation.startDate;
+    const nextEndDate = req.body.endDate ? new Date(req.body.endDate) : currentReservation.endDate;
 
     const hasOverlap = await hasOverlappingReservation({
       catwayNumber: nextCatwayNumber,
-      checkIn: nextCheckIn,
-      checkOut: nextCheckOut,
+      startDate: nextStartDate,
+      endDate: nextEndDate,
       excludeId: id,
     });
 
@@ -113,7 +113,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

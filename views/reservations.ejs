@@ -27,11 +27,11 @@
         <label for="boatName">Nom bateau</label>
         <input type="text" id="boatName" required>
 
-        <label for="checkIn">Date arrivee</label>
-        <input type="date" id="checkIn" required>
+        <label for="startDate">Date arrivee</label>
+        <input type="date" id="startDate" required>
 
-        <label for="checkOut">Date depart</label>
-        <input type="date" id="checkOut" required>
+        <label for="endDate">Date depart</label>
+        <input type="date" id="endDate" required>
 
         <div class="actions">
           <button type="submit" id="submit-btn">Creer</button>
@@ -76,8 +76,8 @@
       catwayNumber: document.getElementById('catwayNumber'),
       clientName: document.getElementById('clientName'),
       boatName: document.getElementById('boatName'),
-      checkIn: document.getElementById('checkIn'),
-      checkOut: document.getElementById('checkOut'),
+      startDate: document.getElementById('startDate'),
+      endDate: document.getElementById('endDate'),
     };
 
     let reservationsCache = [];
@@ -95,8 +95,8 @@
       fields.catwayNumber.value = '';
       fields.clientName.value = '';
       fields.boatName.value = '';
-      fields.checkIn.value = '';
-      fields.checkOut.value = '';
+      fields.startDate.value = '';
+      fields.endDate.value = '';
       formTitle.textContent = 'Creer une reservation';
       submitBtn.textContent = 'Creer';
       cancelBtn.hidden = true;
@@ -107,8 +107,8 @@
       fields.catwayNumber.value = reservation.catwayNumber;
       fields.clientName.value = reservation.clientName;
       fields.boatName.value = reservation.boatName;
-      fields.checkIn.value = toInputDate(reservation.checkIn);
-      fields.checkOut.value = toInputDate(reservation.checkOut);
+      fields.startDate.value = toInputDate(reservation.startDate);
+      fields.endDate.value = toInputDate(reservation.endDate);
       formTitle.textContent = 'Modifier une reservation';
       submitBtn.textContent = 'Mettre a jour';
       cancelBtn.hidden = false;
@@ -134,8 +134,8 @@
             <td>${reservation.catwayNumber}</td>
             <td>${reservation.clientName}</td>
             <td>${reservation.boatName}</td>
-            <td>${toDisplayDate(reservation.checkIn)}</td>
-            <td>${toDisplayDate(reservation.checkOut)}</td>
+            <td>${toDisplayDate(reservation.startDate)}</td>
+            <td>${toDisplayDate(reservation.endDate)}</td>
             <td>
               <button type="button" data-action="show" data-id="${reservation._id}">Details</button>
               <button type="button" data-action="edit" data-id="${reservation._id}">Modifier</button>
@@ -188,8 +188,8 @@
         catwayNumber: Number(fields.catwayNumber.value),
         clientName: fields.clientName.value.trim(),
         boatName: fields.boatName.value.trim(),
-        checkIn: fields.checkIn.value,
-        checkOut: fields.checkOut.value,
+        startDate: fields.startDate.value,
+        endDate: fields.endDate.value,
       };
 
       try {
@@ -223,7 +223,7 @@
       if (!reservation) return;
 
       if (action === 'show') {
-        tableMessage.textContent = `Reservation ${reservation.clientName} - catway ${reservation.catwayNumber} (${toDisplayDate(reservation.checkIn)} au ${toDisplayDate(reservation.checkOut)})`;
+        tableMessage.textContent = `Reservation ${reservation.clientName} - catway ${reservation.catwayNumber} (${toDisplayDate(reservation.startDate)} au ${toDisplayDate(reservation.endDate)})`;
         return;
       }
 

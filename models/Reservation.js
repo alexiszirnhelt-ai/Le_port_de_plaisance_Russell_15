@@ -25,16 +25,16 @@ const reservationSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 100,
     },
-    checkIn: {
+    startDate: {
       type: Date,
       required: true,
     },
-    checkOut: {
+    endDate: {
       type: Date,
       required: true,
       validate: {
         validator(value) {
-          return this.checkIn && value > this.checkIn;
+          return this.startDate && value > this.startDate;
         },
         message: 'La date de depart doit etre posterieure a la date d arrivee.',
       },
