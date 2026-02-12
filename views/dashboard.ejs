@@ -4,19 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tableau de bord - Port de Plaisance Russell</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
-  <main>
-    <h1>Tableau de bord</h1>
+  <main class="container">
+    <div class="topbar">
+      <h1>Tableau de bord</h1>
+      <form action="/logout" method="post">
+        <button type="submit" class="logout-btn">
+          <span class="logout-icon">-></span>
+          Se deconnecter
+        </button>
+      </form>
+    </div>
 
-    <p><strong>Email :</strong> <%= userEmail %></p>
-    <p><strong>Date du jour :</strong> <%= new Date(currentDate).toLocaleDateString('fr-FR') %></p>
-    <form action="/logout" method="post">
-      <button type="submit">Se deconnecter</button>
-    </form>
+    <section class="meta">
+      <div class="card">
+        <div class="label">Email</div>
+        <div class="value"><%= userEmail %></div>
+      </div>
+      <div class="card">
+        <div class="label">Date du jour</div>
+        <div class="value"><%= new Date(currentDate).toLocaleDateString('fr-FR') %></div>
+      </div>
+    </section>
 
     <h2>Reservations en cours</h2>
-    <table border="1" cellpadding="8" cellspacing="0">
+    <table>
       <thead>
         <tr>
           <th>Catway</th>
@@ -32,6 +46,7 @@
         </tr>
       </tbody>
     </table>
+    <p id="error">Impossible de charger les reservations.</p>
   </main>
 
   <script>
@@ -68,6 +83,7 @@
           </tr>
         `).join('');
       } catch (error) {
+        document.getElementById('error').style.display = 'block';
         tbody.innerHTML = '<tr><td colspan="5">Impossible de charger les reservations.</td></tr>';
       }
     }
