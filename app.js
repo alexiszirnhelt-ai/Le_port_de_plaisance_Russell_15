@@ -67,6 +67,7 @@ app.get('/', (req, res) => {
 app.get('/api-docs', (req, res) => {
   res.type('html').send(`
     <h1>Documentation API</h1>
+    <p><a href="/dashboard">Retour au tableau de bord</a></p>
     <ul>
       <li>POST /login</li>
       <li>GET /logout</li>
