@@ -31,15 +31,16 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email et mot de passe requis.' });
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: 'Nom d utilisateur, email et mot de passe requis.' });
   }
 
   try {
-    const created = await User.create({ email, password });
+    const created = await User.create({ username, email, password });
     return res.status(201).json({
       _id: created._id,
+      username: created.username,
       email: created.email,
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,
@@ -55,7 +56,7 @@ router.put('/:id', async (req, res) => {
     return res.status(400).json({ message: 'ID invalide.' });
   }
 
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     const user = await User.findById(id);
@@ -63,6 +64,9 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
 
+    if (username) {
+      user.username = username;
+    }
     if (email) {
       user.email = email;
     }
@@ -73,6 +77,7 @@ router.put('/:id', async (req, res) => {
     await user.save();
     return res.status(200).json({
       _id: user._id,
+      username: user.username,
       email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,

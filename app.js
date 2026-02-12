@@ -17,12 +17,14 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/port_r
 
 const ADMIN_EMAIL = 'admin@russell.com';
 const ADMIN_PASSWORD = '123Russell';
+const ADMIN_USERNAME = 'admin';
 
 const ensureAdminUser = async () => {
   const existingAdmin = await User.findOne({ email: ADMIN_EMAIL });
 
   if (!existingAdmin) {
     await User.create({
+      username: ADMIN_USERNAME,
       email: ADMIN_EMAIL,
       password: ADMIN_PASSWORD,
     });
@@ -30,12 +32,23 @@ const ensureAdminUser = async () => {
     return;
   }
 
+  let mustSave = false;
+
+  if (!existingAdmin.username) {
+    existingAdmin.username = ADMIN_USERNAME;
+    mustSave = true;
+  }
+
   const isExpectedPassword = await existingAdmin.comparePassword(ADMIN_PASSWORD);
 
   if (!isExpectedPassword) {
     existingAdmin.password = ADMIN_PASSWORD;
+    mustSave = true;
+  }
+
+  if (mustSave) {
     await existingAdmin.save();
-    console.log('Mot de passe administrateur mis a jour.');
+    console.log('Compte administrateur mis a jour.');
   }
 };
 
@@ -83,7 +96,7 @@ app.use('/dashboard', authMiddleware);
 
 app.get('/dashboard', (req, res) => {
   const email = req.user.email || '';
-  const rawName = email.split('@')[0] || 'Utilisateur';
+  const rawName = req.user.username || email.split('@')[0] || 'Utilisateur';
   const userName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
 
   res.render('dashboard', {
