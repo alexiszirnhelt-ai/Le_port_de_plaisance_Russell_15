@@ -4,6 +4,10 @@ const User = require('../models/User');
 
 const router = express.Router();
 
+router.get('/login', (req, res) => {
+  return res.redirect('/');
+});
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -36,16 +40,20 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    return res.status(200).json({
-      message: 'Connexion reussie.',
-      token,
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000,
     });
+
+    return res.redirect('/dashboard');
   } catch (error) {
     return res.status(500).send('Erreur serveur lors de la connexion.');
   }
 });
 
 router.post('/logout', (req, res) => {
+  res.clearCookie('token');
   return res.redirect('/');
 });
 
