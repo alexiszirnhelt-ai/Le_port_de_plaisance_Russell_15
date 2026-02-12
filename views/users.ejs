@@ -90,7 +90,7 @@
     }
 
     function fillForm(user) {
-      fields.id.value = user._id;
+      fields.id.value = user.email;
       fields.username.value = user.username;
       fields.email.value = user.email;
       fields.password.value = '';
@@ -122,9 +122,9 @@
             <td>${formatDate(user.createdAt)}</td>
             <td>${formatDate(user.updatedAt)}</td>
             <td>
-              <button type="button" data-action="show" data-id="${user._id}">Details</button>
-              <button type="button" data-action="edit" data-id="${user._id}">Modifier</button>
-              <button type="button" data-action="delete" data-id="${user._id}" class="danger">Supprimer</button>
+              <button type="button" data-action="show" data-id="${encodeURIComponent(user.email)}">Details</button>
+              <button type="button" data-action="edit" data-id="${encodeURIComponent(user.email)}">Modifier</button>
+              <button type="button" data-action="delete" data-id="${encodeURIComponent(user.email)}" class="danger">Supprimer</button>
             </td>
           </tr>
         `).join('');
@@ -146,7 +146,7 @@
     }
 
     async function updateUser(id, payload) {
-      const response = await fetch(`/users/${id}`, {
+      const response = await fetch(`/users/${encodeURIComponent(id)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -158,7 +158,7 @@
     }
 
     async function deleteUser(id) {
-      const response = await fetch(`/users/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/users/${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.message || 'Echec de suppression');
@@ -207,7 +207,8 @@
 
       const id = button.dataset.id;
       const action = button.dataset.action;
-      const user = usersCache.find((item) => item._id === id);
+      const decodedEmail = decodeURIComponent(id);
+      const user = usersCache.find((item) => item.email === decodedEmail);
 
       if (!user) return;
 
@@ -227,9 +228,9 @@
         if (!confirmed) return;
 
         try {
-          await deleteUser(id);
+          await deleteUser(decodedEmail);
           tableMessage.textContent = 'Utilisateur supprime.';
-          if (fields.id.value === id) {
+          if (fields.id.value === decodedEmail) {
             resetForm();
           }
           await loadUsers();

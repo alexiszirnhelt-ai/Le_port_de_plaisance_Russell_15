@@ -69,7 +69,7 @@ app.get('/api-docs', (req, res) => {
     <h1>Documentation API</h1>
     <ul>
       <li>POST /login</li>
-      <li>POST /logout</li>
+      <li>GET /logout</li>
       <li>GET /catways</li>
       <li>GET /catways/:id</li>
       <li>POST /catways</li>
@@ -87,10 +87,10 @@ app.get('/api-docs', (req, res) => {
       <li>PUT /catways/:id/reservations/:idReservation</li>
       <li>DELETE /catways/:id/reservations/:idReservation</li>
       <li>GET /users</li>
-      <li>GET /users/:id</li>
+      <li>GET /users/:email</li>
       <li>POST /users</li>
-      <li>PUT /users/:id</li>
-      <li>DELETE /users/:id</li>
+      <li>PUT /users/:email</li>
+      <li>DELETE /users/:email</li>
     </ul>
   `);
 });

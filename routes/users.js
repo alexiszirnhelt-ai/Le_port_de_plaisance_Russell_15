@@ -1,8 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const User = require('../models/User');
 
 const router = express.Router();
+
+const normalizeEmailParam = (value) => {
+  const decoded = decodeURIComponent(value || '');
+  const normalized = decoded.toLowerCase().trim();
+  if (!normalized || !normalized.includes('@')) {
+    return null;
+  }
+  return normalized;
+};
 
 router.get('/', async (req, res) => {
   try {
@@ -13,14 +21,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'ID invalide.' });
+router.get('/:email', async (req, res) => {
+  const email = normalizeEmailParam(req.params.email);
+  if (!email) {
+    return res.status(400).json({ message: 'Email invalide.' });
   }
 
   try {
-    const user = await User.findById(id).select('-password');
+    const user = await User.findOne({ email }).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
@@ -50,16 +58,16 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'ID invalide.' });
+router.put('/:email', async (req, res) => {
+  const emailParam = normalizeEmailParam(req.params.email);
+  if (!emailParam) {
+    return res.status(400).json({ message: 'Email invalide.' });
   }
 
   const { username, email, password } = req.body;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findOne({ email: emailParam });
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
@@ -87,14 +95,14 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'ID invalide.' });
+router.delete('/:email', async (req, res) => {
+  const email = normalizeEmailParam(req.params.email);
+  if (!email) {
+    return res.status(400).json({ message: 'Email invalide.' });
   }
 
   try {
-    const deleted = await User.findByIdAndDelete(id);
+    const deleted = await User.findOneAndDelete({ email });
     if (!deleted) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
