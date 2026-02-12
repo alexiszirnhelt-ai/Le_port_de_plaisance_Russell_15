@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord - Port de Plaisance Russell</title>
+</head>
+<body>
+  <main>
+    <h1>Tableau de bord</h1>
+
+    <p><strong>Email :</strong> <%= userEmail %></p>
+    <p><strong>Date du jour :</strong> <%= new Date(currentDate).toLocaleDateString('fr-FR') %></p>
+
+    <h2>Reservations en cours</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Arrivee</th>
+          <th>Depart</th>
+        </tr>
+      </thead>
+      <tbody id="reservations-body">
+        <tr>
+          <td colspan="5">Chargement des reservations...</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    async function loadCurrentReservations() {
+      const tbody = document.getElementById('reservations-body');
+
+      try {
+        const response = await fetch('/reservations');
+        if (!response.ok) {
+          throw new Error('Erreur de chargement');
+        }
+
+        const reservations = await response.json();
+        const now = new Date();
+
+        const activeReservations = reservations.filter((reservation) => {
+          const checkIn = new Date(reservation.checkIn);
+          const checkOut = new Date(reservation.checkOut);
+          return checkIn <= now && checkOut >= now;
+        });
+
+        if (activeReservations.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5">Aucune reservation en cours.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = activeReservations.map((reservation) => `
+          <tr>
+            <td>${reservation.catwayNumber}</td>
+            <td>${reservation.clientName}</td>
+            <td>${reservation.boatName}</td>
+            <td>${new Date(reservation.checkIn).toLocaleDateString('fr-FR')}</td>
+            <td>${new Date(reservation.checkOut).toLocaleDateString('fr-FR')}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="5">Impossible de charger les reservations.</td></tr>';
+      }
+    }
+
+    loadCurrentReservations();
+  </script>
+</body>
+</html>

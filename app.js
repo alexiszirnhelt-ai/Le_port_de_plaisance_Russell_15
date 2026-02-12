@@ -30,7 +30,10 @@ app.use('/reservations', reservationRoutes);
 app.use('/dashboard', authMiddleware);
 
 app.get('/dashboard', (req, res) => {
-  res.send('Tableau de bord');
+  res.render('dashboard', {
+    userEmail: req.user.email,
+    currentDate: new Date(),
+  });
 });
 
 mongoose
