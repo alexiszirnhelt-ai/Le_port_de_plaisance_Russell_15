@@ -30,7 +30,7 @@ ADMIN_PASSWORD=123Russell
 ADMIN_USERNAME=admin
 ```
 
-## Donn�es �chantillon (Compass)
+## Données échantillon (Compass)
 
 Les fichiers sont dans `data/` :
 - `data/catways.json`
