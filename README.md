@@ -1,13 +1,13 @@
 # Le Port de Plaisance Russell 15
 
-API REST Express + MongoDB pour la gestion:
+API REST Express + MongoDB pour la gestion :
 - des catways,
-- des reservations,
+- des réservations,
 - des utilisateurs.
 
-## Prerequis
+## Prérequis
 
-- Node.js 18+ (ou version recente compatible)
+- Node.js 18+ (ou version récente compatible)
 - MongoDB (local ou distant)
 - MongoDB Compass (pour l'import des fichiers JSON)
 
@@ -19,7 +19,7 @@ npm install
 
 ## Configuration
 
-Creer un fichier `.env` a la racine avec:
+Créer un fichier `.env` à la racine avec :
 
 ```env
 PORT=8080
@@ -30,14 +30,14 @@ ADMIN_PASSWORD=123Russell
 ADMIN_USERNAME=admin
 ```
 
-## Donnees echantillon (Compass)
+## Donn�es �chantillon (Compass)
 
-Les fichiers sont dans `data/`:
+Les fichiers sont dans `data/` :
 - `data/catways.json`
 - `data/reservations.json`
 
-Import avec MongoDB Compass:
-1. Ouvrir la base cible (ex: `port_russell`).
+Import avec MongoDB Compass :
+1. Ouvrir la base cible (ex : `port_russell`).
 2. Importer `catways.json` dans la collection `catways`.
 3. Importer `reservations.json` dans la collection `reservations`.
 
@@ -53,55 +53,66 @@ ou
 npm start
 ```
 
-Application disponible par defaut sur `http://localhost:8080`.
+Application disponible par défaut sur `http://localhost:8080`.
 
 ## Interfaces web
 
-- Page d'accueil (connexion): `GET /`
-- Tableau de bord (auth requis): `GET /dashboard`
-- Interface CRUD catways (auth requis): `GET /dashboard/catways`
-- Interface CRUD reservations (auth requis): `GET /dashboard/reservations`
-- Interface CRUD utilisateurs (auth requis): `GET /dashboard/users`
-- Documentation API (HTML): `GET /api-docs`
+- Page d'accueil (connexion) : `GET /`
+- Tableau de bord (auth requis) : `GET /dashboard`
+- Interface CRUD catways (auth requis) : `GET /dashboard/catways`
+- Interface CRUD réservations (auth requis) : `GET /dashboard/reservations`
+- Interface CRUD utilisateurs (auth requis) : `GET /dashboard/users`
+- Documentation API (HTML) : `GET /api-docs`
 
 ## Authentification
 
 - `POST /login`
 - `GET /logout`
 - `POST /logout`
-- Compte de connexion:
-  - Email: `admin@russell.com`
-  - Mot de passe: `123Russell`
+- Compte de connexion :
+  - Email : `admin@russell.com`
+  - Mot de passe : `123Russell`
 
-Le token JWT est stocke dans un cookie HTTP only.
+Le token JWT est stocké dans un cookie HttpOnly.
 
 ## Routes principales
 
+Note :
+- Certaines routes sont publiques (lecture).
+- Les routes de création, modification et suppression sont protégées (cookie JWT requis).
+
 ### Catways
-- `GET /catways`
-- `GET /catways/:id`
-- `POST /catways`
-- `PUT /catways/:id`
-- `DELETE /catways/:id`
+- `GET /catways` (public)
+- `GET /catways/:id` (public)
+- `POST /catways` (auth requis)
+- `PUT /catways/:id` (auth requis)
+- `DELETE /catways/:id` (auth requis)
 
-`id` represente le numero de catway.
+`id` représente le numéro de catway.
 
-### Reservations (sous-ressource catway)
-- `GET /catways/:id/reservations`
-- `GET /catways/:id/reservations/:idReservation`
-- `POST /catways/:id/reservations`
-- `PUT /catways/:id/reservations`
-- `PUT /catways/:id/reservations/:idReservation`
-- `DELETE /catways/:id/reservations/:idReservation`
+### Réservations (ressource globale)
+- `GET /reservations` (public)
+- `GET /reservations/:id` (public)
+- `POST /reservations` (auth requis)
+- `PUT /reservations/:id` (auth requis)
+- `DELETE /reservations/:id` (auth requis)
+
+### Réservations (sous-ressource catway)
+- `GET /catways/:id/reservations` (public)
+- `GET /catways/:id/reservations/:idReservation` (public)
+- `POST /catways/:id/reservations` (auth requis)
+- `PUT /catways/:id/reservations` (auth requis)
+- `PUT /catways/:id/reservations/:idReservation` (auth requis)
+- `DELETE /catways/:id/reservations/:idReservation` (auth requis)
 
 ### Utilisateurs
-- `GET /users`
-- `GET /users/:email`
-- `POST /users`
-- `PUT /users/:email`
-- `DELETE /users/:email`
+- `GET /users` (auth requis)
+- `GET /users/:email` (auth requis)
+- `POST /users` (auth requis)
+- `PUT /users/:email` (auth requis)
+- `DELETE /users/:email` (auth requis)
 
-## Depot GitHub
+## Dépôt GitHub
 
-Depot distant configure:
+Dépôt distant configuré :
 - `https://github.com/alexiszirnhelt-ai/Le_port_de_plaisance_Russell_15.git`
