@@ -55,16 +55,20 @@ npm start
 
 Application disponible par defaut sur `http://localhost:8080`.
 
-## Interfaces
+## Interfaces web
 
 - Page d'accueil (connexion): `GET /`
 - Tableau de bord (auth requis): `GET /dashboard`
+- Interface CRUD catways (auth requis): `GET /dashboard/catways`
+- Interface CRUD reservations (auth requis): `GET /dashboard/reservations`
+- Interface CRUD utilisateurs (auth requis): `GET /dashboard/users`
 - Documentation API (HTML): `GET /api-docs`
 
 ## Authentification
 
 - `POST /login`
 - `GET /logout`
+- `POST /logout`
 - Compte de connexion:
   - Email: `admin@russell.com`
   - Mot de passe: `123Russell`
