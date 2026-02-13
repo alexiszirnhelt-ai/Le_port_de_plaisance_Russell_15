@@ -97,18 +97,6 @@ Le token JWT est stocke dans un cookie HTTP only.
 - `PUT /users/:email`
 - `DELETE /users/:email`
 
-## Deploiement
-
-Le projet est deployable sur une plateforme de ton choix (Render, Railway, VPS, etc.).
-
-Minimum a configurer en production:
-- `MONGODB_URI`
-- `JWT_SECRET`
-- `PORT` (souvent fourni par la plateforme)
-
-Renseigner ici l'URL de production:
-- `https://...`
-
 ## Depot GitHub
 
 Depot distant configure:
