@@ -16,9 +16,9 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/port_russell';
 
-const ADMIN_EMAIL = 'admin@russell.com';
-const ADMIN_PASSWORD = '123Russell';
-const ADMIN_USERNAME = 'admin';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@russell.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '123Russell';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 
 const ensureAdminUser = async () => {
   const existingAdmin = await User.findOne({ email: ADMIN_EMAIL });
@@ -99,7 +99,6 @@ app.get('/api-docs', (req, res) => {
 app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
 app.use('/catways', catwayReservationRoutes);
-app.use('/catway', catwayReservationRoutes);
 app.use('/reservations', reservationRoutes);
 app.use('/users', authMiddleware, userRoutes);
 app.use('/dashboard', authMiddleware);

@@ -25,6 +25,9 @@ Creer un fichier `.env` a la racine avec:
 PORT=8080
 MONGODB_URI=mongodb://localhost:27017/port_russell
 JWT_SECRET=port_russell_secret_2026
+ADMIN_EMAIL=admin@russell.com
+ADMIN_PASSWORD=123Russell
+ADMIN_USERNAME=admin
 ```
 
 ## Donnees echantillon (Compass)
